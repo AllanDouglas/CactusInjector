@@ -1,0 +1,16 @@
+{
+    "name": "AllanDouglas.CactusInjector.Editor",
+    "rootNamespace": "AllanDouglas.CactusInjector.Editor",
+    "references": [
+        "GUID:33b37c6d7496f2342904a189d27b0dda"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
