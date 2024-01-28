@@ -11,9 +11,13 @@ namespace AllanDouglas.CactusInjector.Editor
         {
             VisualElement container = new();
 
-            SerializedProperty scriptableObjectByTypeMappingsProperty = serializedObject.FindProperty("_scriptableObjectByTypeMappings");
+            var scriptableObjectByTypeMappingsProperty = serializedObject.FindProperty("_scriptableObjectByTypeMappings");
+            var scriptableObjectByTagMappingsProperty = serializedObject.FindProperty("_scriptableObjectByTagMappings");
 
             container.Add(new PropertyField(scriptableObjectByTypeMappingsProperty));
+            container.Add(new PropertyField(scriptableObjectByTagMappingsProperty));
+
+            serializedObject.ApplyModifiedProperties();
 
             return container;
         }

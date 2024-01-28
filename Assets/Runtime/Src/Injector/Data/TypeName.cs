@@ -14,7 +14,7 @@ namespace AllanDouglas.CactusInjector
         public readonly Type GetMappedType()
         {
             var name = _name;
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).First(t => t.FullName == name);
+            return TypeUtility.Types.First(t => t.FullName == name);
         }
     }
 }

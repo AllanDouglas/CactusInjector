@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: New Injectable Service 2
   m_EditorClassIdentifier: 
   _injectedService: {fileID: 0}
+  _injectedServiceByName: {fileID: 11400000, guid: 897cadbdfe70ec740bebfbb499f23596, type: 2}

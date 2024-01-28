@@ -51,13 +51,6 @@ namespace AllanDouglas.CactusInjector.Editor
         }
 
         // Get all types marked with InjectableAttribute
-        private List<string> GetInjectableTypes()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes()
-                    .Where(t => t.GetCustomAttributes(typeof(InjectableAttribute), true).Length > 0))
-                    .Select(t => t.FullName)
-                .ToList();
-        }
+        private List<string> GetInjectableTypes() => TypeUtility.InjectablesTypesNames;
     }
 }

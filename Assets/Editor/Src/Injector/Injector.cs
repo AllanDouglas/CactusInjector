@@ -22,7 +22,7 @@ namespace AllanDouglas.CactusInjector.Editor
         public static void Inject()
         {
             Debug.Log("Execute");
-            string filePath = Path.Combine(DI_CONTAINER_DIRECTORY, DI_CONTAINER_FILE_NAME+".asset");
+            string filePath = Path.Combine(DI_CONTAINER_DIRECTORY, DI_CONTAINER_FILE_NAME + ".asset");
             var diContainer = AssetDatabase.LoadAssetAtPath<CactusInjectorContainerSO>(filePath);
 
             foreach (var instance in diContainer.GetAllInstance())
@@ -33,15 +33,48 @@ namespace AllanDouglas.CactusInjector.Editor
 
                 foreach (var item in fieldsWithAttributes)
                 {
-                    var resolveType = item.GetCustomAttribute<InjectAttribute>().TryGetType(out var mapType) 
-                        ? mapType 
-                        : item.GetType();
-
-                    if (item.GetValue(instance) is null && diContainer.TryResolve(resolveType, out var obj))
+                    if (item.GetValue(instance) is null && 
+                        ResolveType(diContainer,
+                                    item,
+                                    item.GetCustomAttribute<InjectAttribute>(),
+                                    out var obj))
                     {
                         item.SetValue(instance, obj);
                     }
                 }
+            }
+
+            static bool ResolveByType(
+                CactusInjectorContainerSO diContainer,
+                FieldInfo item,
+                InjectAttribute attrib,
+                out Object obj)
+            {
+                return diContainer.TryResolve((attrib.TryGetType(out var mapType)
+                                                ? mapType
+                                                : item.GetType()), out obj);
+            }
+
+            static bool ResolveByTagName(
+                CactusInjectorContainerSO diContainer,
+                FieldInfo item,
+                InjectAttribute attrib,
+                out Object obj)
+            {
+                return diContainer.TryResolve((attrib.TryGetTag(out var mapType)
+                                                ? mapType
+                                                : item.Name), out obj);
+            }
+
+            static bool ResolveType(
+                CactusInjectorContainerSO diContainer,
+                FieldInfo item,
+                InjectAttribute attrib,
+                out Object obj)
+            {
+                return (attrib.UsesType
+                    ? ResolveByType(diContainer, item, attrib, out obj)
+                    : ResolveByTagName(diContainer, item, attrib, out obj));
             }
         }
 

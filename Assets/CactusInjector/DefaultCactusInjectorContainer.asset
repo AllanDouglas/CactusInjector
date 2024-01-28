@@ -19,3 +19,7 @@ MonoBehaviour:
   - Type:
       _name: IInjectableService2
     Instance: {fileID: 11400000, guid: 4c7f862c2eb6bd645bdef586f6b89140, type: 2}
+  _scriptableObjectByTagMappings:
+  - Tag: TEST_SERVICE_1
+    Instance: {fileID: 11400000, guid: 897cadbdfe70ec740bebfbb499f23596, type: 2}
+  _selfInjected: []
