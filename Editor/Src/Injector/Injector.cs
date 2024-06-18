@@ -11,7 +11,7 @@ namespace AllanDouglas.CactusInjector.Editor
     {
         public const string DI_CONFIG_CONTAINER_DIRECTORY = "Assets/CactusInjector/Editor";
         public const string DI_CONFIG_CONTAINER_FILE_NAME = "DefaultCactusInjectorConfig";
-        private const string DI_CONTAINER_DIRECTORY = "Assets/Resources/CactusInjector";
+        private const string DI_CONTAINER_DIRECTORY = "Assets/CactusInjector";
         private const string DI_CONTAINER_NAME = "CactusInjectorContainer.asset";
 
         [UnityEditor.InitializeOnLoadMethod]
