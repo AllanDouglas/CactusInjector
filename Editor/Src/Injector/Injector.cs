@@ -115,7 +115,7 @@ namespace AllanDouglas.CactusInjector.Editor
         {
             return diContainer.TryResolve((attrib.TryGetType(out var mapType)
                                             ? mapType
-                                            : item.GetType()), out obj);
+                                            : item.FieldType), out obj);
         }
 
         static bool ResolveByTagName(
