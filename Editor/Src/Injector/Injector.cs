@@ -71,8 +71,7 @@ namespace AllanDouglas.CactusInjector.Editor
         {
             foreach (var item in fieldsWithAttributes)
             {
-                if (item.GetValue(instance) is null &&
-                    ResolveType(diContainer,
+                if (ResolveType(diContainer,
                                 item,
                                 item.GetCustomAttribute<InjectAttribute>(),
                                 out var obj))
