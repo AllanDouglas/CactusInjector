@@ -67,6 +67,15 @@ namespace AllanDouglas.CactusInjector
                 }
             }
 
+            for (int i = 0; i < _selfInjected.Length; i++)
+            {
+                if (_selfInjected[i].GetType() == type)
+                {
+                    obj = _selfInjected[i];
+                    return true;
+                }
+            }
+
             obj = default;
             return false;
         }
