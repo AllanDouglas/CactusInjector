@@ -15,7 +15,7 @@ namespace AllanDouglas.CactusInjector
         public InjectAttribute(Type type) => _type = type;
         public InjectAttribute(string tag) => _tag = tag;
 
-        public bool UsesType => _type != default;
+        public bool UsesType => string.IsNullOrEmpty(_tag);
 
         public bool TryGetType(out Type type)
         {

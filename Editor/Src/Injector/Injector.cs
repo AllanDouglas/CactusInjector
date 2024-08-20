@@ -63,38 +63,21 @@ namespace AllanDouglas.CactusInjector.Editor
 
             foreach (var instance in diContainer.GetAllInstance())
             {
-
                 InjectFields(instance, diContainer, GetInjectableFields(instance));
-
-                var fieldsWithAttributes = instance.GetType()
-                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-                    .Where(t => t.GetCustomAttributes(typeof(InjectAttribute), false).Length > 0);
-
-                foreach (var item in fieldsWithAttributes)
-                {
-                    if (item.GetValue(instance) is null &&
-                        ResolveType(diContainer,
-                                    item,
-                                    item.GetCustomAttribute<InjectAttribute>(),
-                                    out var obj))
-                    {
-                        item.SetValue(instance, obj);
-                    }
-                }
             }
         }
 
-        private static void InjectFields(Object monoBehaviour, CactusInjectorContainerSO diContainer, IEnumerable<FieldInfo> fieldsWithAttributes)
+        private static void InjectFields(Object instance, CactusInjectorContainerSO diContainer, IEnumerable<FieldInfo> fieldsWithAttributes)
         {
             foreach (var item in fieldsWithAttributes)
             {
-                if (item.GetValue(monoBehaviour) is null &&
+                if (item.GetValue(instance) is null &&
                     ResolveType(diContainer,
                                 item,
                                 item.GetCustomAttribute<InjectAttribute>(),
                                 out var obj))
                 {
-                    item.SetValue(monoBehaviour, obj);
+                    item.SetValue(instance, obj);
                 }
             }
         }
