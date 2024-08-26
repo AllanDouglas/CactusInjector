@@ -18,16 +18,16 @@ namespace AllanDouglas.CactusInjector
 
         public IEnumerable<ScriptableObject> GetAllInstance()
         {
-            var byTypeMaps = (_scriptableObjectByTypeMappings == null)
+            var byTypeMaps = (_scriptableObjectByTypeMappings != null)
                  ? _scriptableObjectByTypeMappings
                  : Array.Empty<ScriptableObjectByTypeMappingSet>();
 
-            var byTagMaps = (_scriptableObjectByTagMappings == null)
+            var byTagMaps = (_scriptableObjectByTagMappings != null)
                  ? _scriptableObjectByTagMappings
                  : Array.Empty<ScriptableObjectByTagMappingSet>();
 
 
-            var self = (_selfInjected == null)
+            var self = (_selfInjected != null)
                  ? _selfInjected
                  : Array.Empty<ScriptableObject>();
 
