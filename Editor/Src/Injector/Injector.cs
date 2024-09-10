@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AllanDouglas.CactusInjector.Editor
 {
@@ -16,9 +18,20 @@ namespace AllanDouglas.CactusInjector.Editor
         {
             var fieldsWithAttributes = GetInjectableFields(monoBehaviour);
 
-            if (fieldsWithAttributes.Count() > 0 && TryLoadDIContainer(out var diContainer))
+            if (fieldsWithAttributes.Count() > 0 && TryGetDIContainer(out var diContainer))
             {
                 InjectFields(monoBehaviour, diContainer, fieldsWithAttributes);
+            }
+        }
+
+        public static void ResolveMonoBehaviour(SerializedObject serializedObject, Type type)
+        {
+            var fieldsWithAttributes = GetInjectableFields(type);
+
+            if (fieldsWithAttributes.Count() > 0 && TryGetDIContainer(out var diContainer))
+            {
+                InjectFields(serializedObject, diContainer, fieldsWithAttributes);
+
             }
         }
 
@@ -26,7 +39,7 @@ namespace AllanDouglas.CactusInjector.Editor
             where T : ScriptableObject
         {
 
-            if (TryLoadDIContainer(out var container))
+            if (TryGetDIContainer(out var container))
             {
                 return container.TryResolve(out instance);
             }
@@ -39,7 +52,7 @@ namespace AllanDouglas.CactusInjector.Editor
             where T : ScriptableObject
         {
 
-            if (TryLoadDIContainer(out var container))
+            if (TryGetDIContainer(out var container))
             {
                 if (container.TryResolve(tag, out var obj) && obj is T tInstance)
                 {
@@ -55,7 +68,7 @@ namespace AllanDouglas.CactusInjector.Editor
         [MenuItem("Cactus Injector/Inject")]
         public static void Inject()
         {
-            if (!TryLoadDIContainer(out var diContainer))
+            if (!TryGetDIContainer(out var diContainer))
             {
                 Debug.LogError("DI Container not loaded!");
                 return;
@@ -81,11 +94,32 @@ namespace AllanDouglas.CactusInjector.Editor
             }
         }
 
+        private static void InjectFields(SerializedObject instance, CactusInjectorContainerSO diContainer, IEnumerable<FieldInfo> fieldsWithAttributes)
+        {
+            foreach (var item in fieldsWithAttributes)
+            {
+                if (ResolveType(diContainer,
+                                item,
+                                item.GetCustomAttribute<InjectAttribute>(),
+                                out var obj))
+                {
+                    var property = instance.FindProperty(item.Name);
+                    if (property.objectReferenceValue == null)
+                    {
+                        property.objectReferenceValue = obj;
+                    }
+                }
+            }
+        }
+
         private static IEnumerable<FieldInfo> GetInjectableFields(Object monoBehaviour) => monoBehaviour.GetType()
                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                    .Where(t => t.GetCustomAttributes(typeof(InjectAttribute), inherit: false).Length > 0);
+        private static IEnumerable<FieldInfo> GetInjectableFields(Type type) => type
+                   .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                   .Where(t => t.GetCustomAttributes(typeof(InjectAttribute), inherit: false).Length > 0);
 
-        private static bool TryLoadDIContainer(out CactusInjectorContainerSO diContainer)
+        public static bool TryGetDIContainer(out CactusInjectorContainerSO diContainer)
         {
             diContainer = null;
             string filePath = Path.Combine(DI_CONFIG_CONTAINER_DIRECTORY, DI_CONFIG_CONTAINER_FILE_NAME + ".asset");

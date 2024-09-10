@@ -1,7 +1,5 @@
 ﻿using UnityEditor;
 
-
-
 namespace AllanDouglas.CactusInjector.Editor
 {
     [CustomEditor(typeof(InjectorMediator), true)]
@@ -9,8 +7,9 @@ namespace AllanDouglas.CactusInjector.Editor
     {
         void OnEnable()
         {
+            Injector.ResolveMonoBehaviour(serializedObject, target.GetType());
+            serializedObject.ApplyModifiedProperties();
             CaptureView();
-            Injector.ResolveMonoBehaviour(target as InjectorMediator);
         }
 
         private void CaptureView()
