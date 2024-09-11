@@ -110,7 +110,6 @@ namespace AllanDouglas.CactusInjector.Editor
                         {
                             item.SetValue(instance, obj);
                         }
-                        return;
                     }
                 }
 
@@ -133,7 +132,6 @@ namespace AllanDouglas.CactusInjector.Editor
                         {
                             property.objectReferenceValue = obj;
                         }
-                        return;
                     }
                 }
 
