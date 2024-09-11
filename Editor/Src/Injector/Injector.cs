@@ -106,9 +106,10 @@ namespace AllanDouglas.CactusInjector.Editor
                                     item.GetCustomAttribute<InjectAttribute>(),
                                     out var obj))
                     {
-                        if (!item.GetValue(instance).Equals(obj))
+                        if (!obj.Equals(item.GetValue(instance)))
                         {
                             item.SetValue(instance, obj);
+                            break;
                         }
                     }
                 }
@@ -131,6 +132,7 @@ namespace AllanDouglas.CactusInjector.Editor
                         if (property.objectReferenceValue != obj)
                         {
                             property.objectReferenceValue = obj;
+                            break;
                         }
                     }
                 }
