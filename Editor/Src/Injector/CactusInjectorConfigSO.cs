@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using AllanDouglas.CactusInjector.Attributes;
+using UnityEngine;
 
 namespace AllanDouglas.CactusInjector.Editor
 {
     public sealed class CactusInjectorConfigSO : ScriptableObject
     {
-        [SerializeField] private CactusInjectorContainerSO _container;
+        [SerializeField, CreateScriptable] private CactusInjectorContainerSO[] _container;
 
-        public CactusInjectorContainerSO Container { get => _container; set => _container = value; }
+        public CactusInjectorContainerSO[] Containers { get => _container; set => _container = value; }
     }
 }

@@ -39,9 +39,15 @@ namespace AllanDouglas.CactusInjector.Editor
             where T : ScriptableObject
         {
 
-            if (TryGetDIContainer(out var container))
+            if (TryGetDIContainer(out var containers))
             {
-                return container.TryResolve(out instance);
+                foreach (var container in containers)
+                {
+                    if (container.TryResolve(out instance))
+                    {
+                        return true;
+                    }
+                }
             }
 
             instance = default;
@@ -52,13 +58,17 @@ namespace AllanDouglas.CactusInjector.Editor
             where T : ScriptableObject
         {
 
-            if (TryGetDIContainer(out var container))
+            if (TryGetDIContainer(out var containers))
             {
-                if (container.TryResolve(tag, out var obj) && obj is T tInstance)
+                foreach (var container in containers)
                 {
-                    instance = tInstance;
-                    return true;
+                    if (container.TryResolve(tag, out var obj) && obj is T tInstance)
+                    {
+                        instance = tInstance;
+                        return true;
+                    }
                 }
+
             }
 
             instance = default;
@@ -74,41 +84,59 @@ namespace AllanDouglas.CactusInjector.Editor
                 return;
             }
 
-            foreach (var instance in diContainer.GetAllInstance())
+            foreach (var container in diContainer)
             {
-                InjectFields(instance, diContainer, GetInjectableFields(instance));
-            }
-        }
-
-        private static void InjectFields(Object instance, CactusInjectorContainerSO diContainer, IEnumerable<FieldInfo> fieldsWithAttributes)
-        {
-            foreach (var item in fieldsWithAttributes)
-            {
-                if (ResolveType(diContainer,
-                                item,
-                                item.GetCustomAttribute<InjectAttribute>(),
-                                out var obj))
+                foreach (var instance in container.GetAllInstance())
                 {
-                    item.SetValue(instance, obj);
+                    InjectFields(instance, diContainer, GetInjectableFields(instance));
                 }
+
             }
+
         }
 
-        private static void InjectFields(SerializedObject instance, CactusInjectorContainerSO diContainer, IEnumerable<FieldInfo> fieldsWithAttributes)
+        private static void InjectFields(Object instance, CactusInjectorContainerSO[] diContainers, IEnumerable<FieldInfo> fieldsWithAttributes)
         {
             foreach (var item in fieldsWithAttributes)
             {
-                if (ResolveType(diContainer,
-                                item,
-                                item.GetCustomAttribute<InjectAttribute>(),
-                                out var obj))
+                foreach (var contianer in diContainers)
                 {
-                    var property = instance.FindProperty(item.Name);
-                    if (property.objectReferenceValue == null)
+                    if (ResolveType(contianer,
+                                    item,
+                                    item.GetCustomAttribute<InjectAttribute>(),
+                                    out var obj))
                     {
-                        property.objectReferenceValue = obj;
+                        if (!item.GetValue(instance).Equals(obj))
+                        {
+                            item.SetValue(instance, obj);
+                        }
+                        return;
                     }
                 }
+
+            }
+        }
+
+        private static void InjectFields(SerializedObject instance, CactusInjectorContainerSO[] diContainers, IEnumerable<FieldInfo> fieldsWithAttributes)
+        {
+            foreach (var item in fieldsWithAttributes)
+            {
+                foreach (var container in diContainers)
+                {
+                    if (ResolveType(container,
+                                    item,
+                                    item.GetCustomAttribute<InjectAttribute>(),
+                                    out var obj))
+                    {
+                        var property = instance.FindProperty(item.Name);
+                        if (property.objectReferenceValue != obj)
+                        {
+                            property.objectReferenceValue = obj;
+                        }
+                        return;
+                    }
+                }
+
             }
         }
 
@@ -119,7 +147,7 @@ namespace AllanDouglas.CactusInjector.Editor
                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
                    .Where(t => t.GetCustomAttributes(typeof(InjectAttribute), inherit: false).Length > 0);
 
-        public static bool TryGetDIContainer(out CactusInjectorContainerSO diContainer)
+        public static bool TryGetDIContainer(out CactusInjectorContainerSO[] diContainer)
         {
             diContainer = null;
             string filePath = Path.Combine(DI_CONFIG_CONTAINER_DIRECTORY, DI_CONFIG_CONTAINER_FILE_NAME + ".asset");
@@ -131,12 +159,12 @@ namespace AllanDouglas.CactusInjector.Editor
                 return false;
             }
 
-            if (cactusInjectorConfig.Container == null)
+            if (cactusInjectorConfig.Containers == null)
             {
                 return false;
             }
 
-            diContainer = cactusInjectorConfig.Container;
+            diContainer = cactusInjectorConfig.Containers;
             return true;
         }
 

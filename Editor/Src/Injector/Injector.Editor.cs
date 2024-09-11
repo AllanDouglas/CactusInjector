@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,7 +54,7 @@ namespace AllanDouglas.CactusInjector.Editor
 
             }
 
-            if (diContainerConfig.Container == null)
+            if (diContainerConfig.Containers == null)
             {
                 if (!Directory.Exists(DI_CONTAINER_DIRECTORY))
                 {
@@ -63,7 +64,8 @@ namespace AllanDouglas.CactusInjector.Editor
                 AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<CactusInjectorContainerSO>(),
                     Path.Combine(DI_CONTAINER_DIRECTORY, DI_CONTAINER_NAME));
 
-                diContainerConfig.Container = AssetDatabase.LoadAssetAtPath<CactusInjectorContainerSO>(Path.Combine(DI_CONTAINER_DIRECTORY, DI_CONTAINER_NAME));
+                var assets = AssetDatabase.LoadAllAssetsAtPath(Path.Combine(DI_CONTAINER_DIRECTORY));
+                diContainerConfig.Containers = assets.Cast<CactusInjectorContainerSO>().ToArray();
                 AssetDatabase.SaveAssets();
             }
 
