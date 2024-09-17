@@ -32,4 +32,14 @@ namespace AllanDouglas.CactusInjector.Editor
         }
     }
 
+
+    [CustomEditor(typeof(InjectedBehaviour), true)]
+    public sealed class InjectedBehaviourEditor : UnityEditor.Editor
+    {
+        void OnEnable()
+        {
+            Injector.ResolveMonoBehaviour(serializedObject, target.GetType());
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
 }

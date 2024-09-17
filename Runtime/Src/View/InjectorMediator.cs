@@ -6,4 +6,6 @@ namespace AllanDouglas.CactusInjector
     {
         [SerializeField] protected Component _view;
     }
+
+    public abstract class InjectedBehaviour : MonoBehaviour { }
 }
